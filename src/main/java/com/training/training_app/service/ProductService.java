@@ -3,16 +3,17 @@ package com.training.training_app.service;
 import java.util.List;
 
 import com.training.training_app.dto.ProductDTO;
+import com.training.training_app.dto.ProductDTOResponse;
 import com.training.training_app.model.Product;
 
 public interface ProductService {
-	public Product postProduct(ProductDTO productdto);
+	public ProductDTOResponse postProduct(ProductDTO productdto);
 
-	public Product getById(Long productId);
+	public ProductDTOResponse getById(Long productId);
 
-	public List<Product> getAllCategory();
+	public List<ProductDTOResponse> getAllCategory();
 
-	public Product updateProduct(Long productId, ProductDTO productdto);
+	public ProductDTOResponse updateProduct(Long productId, ProductDTO productdto);
 
 	public void deleteProduct(Long productId);
 
