@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.training.training_app.dto.UserDTO;
 import com.training.training_app.model.User;
 import com.training.training_app.repository.UserRepository;
 import com.training.training_app.service.UserService;
@@ -33,11 +34,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User updateUser(Long id, User user) {
+	public User updateUser(Long id, UserDTO userdto) {
 		User updatedUser = userRepository.findById(id).map(x -> {
-			x.setEmail(user.getEmail());
-			x.setName(user.getName());
-			x.setPassword(user.getPassword());
+			x.setEmail(userdto.getEmail());
+			x.setName(userdto.getName());
+			x.setPassword(userdto.getPassword());
 			return userRepository.save(x);
 		}).orElseThrow(() -> new RuntimeException("User Id not found"));
 		return updatedUser;

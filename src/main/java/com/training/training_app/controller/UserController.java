@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.training.training_app.dto.UserDTO;
 import com.training.training_app.model.User;
 import com.training.training_app.service.UserService;
 
@@ -25,8 +26,9 @@ public class UserController {
 	private UserService userService;
 
 	@PostMapping
-	public ResponseEntity<User> postNewUser(@RequestBody User user) {
-		User postedUser = userService.postUser(user);
+	public ResponseEntity<User> postNewUser(@RequestBody UserDTO userDTO) {
+		System.out.println(userDTO.getEmail());
+		User postedUser = userService.postUser(changeToUser(userDTO));
 		return new ResponseEntity<User>(postedUser, HttpStatus.CREATED);
 	}
 
@@ -41,14 +43,31 @@ public class UserController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<User> updatePostedUser(@PathVariable(name = "id") Long userId, @RequestBody User user) {
-		User updatedUser = userService.updateUser(userId, user);
+	public ResponseEntity<User> updatePostedUser(@PathVariable(name = "id") Long userId, @RequestBody UserDTO userDTO) {
+		User updatedUser = userService.updateUser(userId, userDTO);
 		return new ResponseEntity<User>(updatedUser, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deletePostedUser(@PathVariable(name = "id") Long userId) {
 		return new ResponseEntity<String>("User deleted successfully", HttpStatus.OK);
+	}
+
+	public User changeToUser(UserDTO userDTO) {
+		User user = new User();
+		user.setName(userDTO.getName());
+		user.setEmail(userDTO.getEmail());
+		user.setPassword(userDTO.getPassword());
+		return user;
+	}
+
+	public UserDTO changeToUserDTO(User user) {
+		UserDTO userDTO = new UserDTO();
+		userDTO.setEmail(user.getEmail());
+		userDTO.setName(user.getName());
+		userDTO.setPassword(user.getName());
+		return userDTO;
+
 	}
 
 }

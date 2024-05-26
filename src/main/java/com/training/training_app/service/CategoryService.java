@@ -7,10 +7,10 @@ import com.training.training_app.model.Category;
 
 public interface CategoryService {
 	
-	public CategoryDTO postCategory(CategoryDTO categorydto);
-	public CategoryDTO getById(Long categoryId);
-	public List<CategoryDTO>getAllCategory();
-	public CategoryDTO updateCategory(Long categoryId,Category category);
+	public Category postCategory(CategoryDTO categorydto);
+	public Category getById(Long categoryId);
+	public List<Category>getAllCategory();
+	public Category updateCategory(Long categoryId, CategoryDTO categorydto);
 	public void deleteCategory(Long categoryId);
 
 }
