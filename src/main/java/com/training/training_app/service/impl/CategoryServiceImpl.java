@@ -16,36 +16,6 @@ public class CategoryServiceImpl implements CategoryService {
 	@Autowired
 	private CategoryRepository categoryRepository;
 
-	@Override
-	public CategoryDTO postCategory(CategoryDTO categorydto) {
-		Category category = categoryRepository.save(changeToCategory(categorydto));
-		return changeToCategoryDTO(category);
-	}
-
-	@Override
-	public CategoryDTO getById(Long categoryId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<CategoryDTO> getAllCategory() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public CategoryDTO updateCategory(Long categoryId, Category category) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void deleteCategory(Long categoryId) {
-		// TODO Auto-generated method stub
-
-	}
-
 	public Category changeToCategory(CategoryDTO categoryDTO) {
 		Category category = new Category();
 		category.setCategoryName(categoryDTO.getCategoryName());
@@ -56,6 +26,42 @@ public class CategoryServiceImpl implements CategoryService {
 		CategoryDTO categoryDTO = new CategoryDTO();
 		categoryDTO.setCategoryName(category.getCategoryName());
 		return categoryDTO;
+	}
+
+	@Override
+	public Category postCategory(CategoryDTO categorydto) {
+		Category category = categoryRepository.save(changeToCategory(categorydto));
+		return category;
+	}
+
+	@Override
+	public Category getById(Long categoryId) {
+		return categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category Id Not found"));
+	}
+
+	@Override
+	public List<Category> getAllCategory() {
+		return categoryRepository.findAll();
+	}
+
+	@Override
+	public Category updateCategory(Long categoryId, CategoryDTO categorydto) {
+		Category updateCategory = categoryRepository.findById(categoryId).map(x -> {
+			x.setCategoryName(categorydto.getCategoryName());
+			return x;
+		}).orElseThrow(() -> new RuntimeException("Category Id Not found"));
+		return updateCategory;
+
+	}
+
+	@Override
+	public void deleteCategory(Long categoryId) {
+		Category getCategory = categoryRepository.findById(categoryId)
+				.orElseThrow(() -> new RuntimeException("Category Id Not found"));
+		if (getCategory != null) {
+			categoryRepository.deleteById(categoryId);
+		}
+
 	}
 
 }
