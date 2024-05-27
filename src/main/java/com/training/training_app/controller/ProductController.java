@@ -15,11 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.training.training_app.dto.ProductDTO;
+import com.training.training_app.dto.ProductDTOResponse;
 import com.training.training_app.model.Product;
 import com.training.training_app.service.ProductService;
-
-
-
 
 @RestController
 @RequestMapping("/api/v1/product")
@@ -28,26 +26,26 @@ public class ProductController {
 	private ProductService productService;
 
 	@PostMapping
-	public ResponseEntity<Product> postProduct(@RequestBody ProductDTO productDTO) {
+	public ResponseEntity<ProductDTOResponse> postProduct(@RequestBody ProductDTO productDTO) {
 		System.out.println(productDTO.getProductName());
-		return new ResponseEntity<Product>(productService.postProduct(productDTO), HttpStatus.CREATED);
+		return new ResponseEntity<ProductDTOResponse>(productService.postProduct(productDTO), HttpStatus.CREATED);
 
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Product>> getAllProduct() {
-		return new ResponseEntity<List<Product>>(productService.getAllCategory(), HttpStatus.OK);
+	public ResponseEntity<List<ProductDTOResponse>> getAllProduct() {
+		return new ResponseEntity<List<ProductDTOResponse>>(productService.getAllCategory(), HttpStatus.OK);
 	}
 
 	@GetMapping("{id}")
-	public ResponseEntity<Product> getProductById(@PathVariable(name = "id") Long productId) {
+	public ResponseEntity<ProductDTOResponse> getProductById(@PathVariable(name = "id") Long productId) {
 		return new ResponseEntity<>(productService.getById(productId), HttpStatus.OK);
 	}
 
 	@PutMapping("{id}")
-	public ResponseEntity<Product> getUpdatedProduct(@PathVariable(name = "id") Long productId,
+	public ResponseEntity<ProductDTOResponse> getUpdatedProduct(@PathVariable(name = "id") Long productId,
 			@RequestBody ProductDTO productDTO) {
-		return new ResponseEntity<Product>(productService.updateProduct(productId, productDTO), HttpStatus.OK);
+		return new ResponseEntity<ProductDTOResponse>(productService.updateProduct(productId, productDTO), HttpStatus.OK);
 	}
 
 	@DeleteMapping("{id}")

@@ -1,11 +1,13 @@
 package com.training.training_app.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.training.training_app.dto.CategoryDTO;
+import com.training.training_app.dto.CategoryDTOResponse;
 import com.training.training_app.model.Category;
 import com.training.training_app.repository.CategoryRepository;
 import com.training.training_app.service.CategoryService;
@@ -22,35 +24,38 @@ public class CategoryServiceImpl implements CategoryService {
 		return category;
 	}
 
-	public CategoryDTO changeToCategoryDTO(Category category) {
-		CategoryDTO categoryDTO = new CategoryDTO();
-		categoryDTO.setCategoryName(category.getCategoryName());
-		return categoryDTO;
+	public CategoryDTOResponse changeToCategoryDTO(Category category) {
+		CategoryDTOResponse categoryDTOResponse = new CategoryDTOResponse();
+		categoryDTOResponse.setId(category.getId());
+		categoryDTOResponse.setCategoryName(category.getCategoryName());
+		categoryDTOResponse.setProductDTO(categoryDTOResponse.getProductDTO());
+		return categoryDTOResponse;
 	}
 
 	@Override
-	public Category postCategory(CategoryDTO categorydto) {
+	public CategoryDTOResponse postCategory(CategoryDTO categorydto) {
 		Category category = categoryRepository.save(changeToCategory(categorydto));
-		return category;
+		return changeToCategoryDTO(category);
 	}
 
 	@Override
-	public Category getById(Long categoryId) {
-		return categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category Id Not found"));
+	public CategoryDTOResponse getById(Long categoryId) {
+		return changeToCategoryDTO(categoryRepository.findById(categoryId)
+				.orElseThrow(() -> new RuntimeException("Category Id Not found")));
 	}
 
 	@Override
-	public List<Category> getAllCategory() {
-		return categoryRepository.findAll();
+	public List<CategoryDTOResponse> getAllCategory() {
+		return categoryRepository.findAll().stream().map(this::changeToCategoryDTO).collect(Collectors.toList());
 	}
 
 	@Override
-	public Category updateCategory(Long categoryId, CategoryDTO categorydto) {
+	public CategoryDTOResponse updateCategory(Long categoryId, CategoryDTO categorydto) {
 		Category updateCategory = categoryRepository.findById(categoryId).map(x -> {
-			x.setCategoryName(categorydto.getCategoryName());
-			return x;
+			x=changeToCategory(categorydto);
+			return categoryRepository.save(x);
 		}).orElseThrow(() -> new RuntimeException("Category Id Not found"));
-		return updateCategory;
+		return changeToCategoryDTO(updateCategory);
 
 	}
 
