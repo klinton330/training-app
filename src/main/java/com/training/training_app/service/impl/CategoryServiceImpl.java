@@ -52,7 +52,7 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public CategoryDTOResponse updateCategory(Long categoryId, CategoryDTO categorydto) {
 		Category updateCategory = categoryRepository.findById(categoryId).map(x -> {
-			x=changeToCategory(categorydto);
+			x.setCategoryName(categorydto.getCategoryName());
 			return categoryRepository.save(x);
 		}).orElseThrow(() -> new RuntimeException("Category Id Not found"));
 		return changeToCategoryDTO(updateCategory);

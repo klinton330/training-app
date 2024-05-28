@@ -45,6 +45,7 @@ public class ProductController {
 	@PutMapping("{id}")
 	public ResponseEntity<ProductDTOResponse> getUpdatedProduct(@PathVariable(name = "id") Long productId,
 			@RequestBody ProductDTO productDTO) {
+		System.out.println("putmapping");
 		return new ResponseEntity<ProductDTOResponse>(productService.updateProduct(productId, productDTO), HttpStatus.OK);
 	}
 

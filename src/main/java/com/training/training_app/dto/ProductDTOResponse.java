@@ -1,6 +1,8 @@
 package com.training.training_app.dto;
 
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,4 +19,5 @@ public class ProductDTOResponse {
 	private String description;
 	private boolean isStockAvailable;
 	private CategoryDTOResponse category;
+	private List<ReviewDTOResponse>reviews;
 }

@@ -10,7 +10,9 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
-public class User {
+public class User extends DateAudit {
+
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
