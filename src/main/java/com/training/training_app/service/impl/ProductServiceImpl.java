@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.training.training_app.dto.CategoryDTOResponse;
 import com.training.training_app.dto.ProductDTO;
 import com.training.training_app.dto.ProductDTOResponse;
+import com.training.training_app.dto.ReviewDTOResponse;
 import com.training.training_app.model.Category;
 import com.training.training_app.model.Product;
 import com.training.training_app.repository.CategoryRepository;
@@ -40,20 +41,24 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public List<ProductDTOResponse> getAllCategory() {
-		return productRepository.findAll()
-                .stream()
-                .map(this::changeToProductDTOResponse)
-                .collect(Collectors.toList());
+		return productRepository.findAll().stream().map(this::changeToProductDTOResponse).collect(Collectors.toList());
 	}
 
 	@Override
 	public ProductDTOResponse updateProduct(Long productId, ProductDTO productdto) {
-		if(productdto.getQuantity()<1)
+		if (productdto.getQuantity() < 1)
 			productdto.setStockAvailable(false);
 		else
 			productdto.setStockAvailable(true);
 		Product updatedProduct = productRepository.findById(productId).map(x -> {
-			x = changeToProduct(productdto);
+			x.setProductName(productdto.getProductName());
+			x.setPrice(productdto.getPrice());
+			x.setDescription(productdto.getDescription());
+			x.setQuantity(productdto.getQuantity());
+			x.setStockAvailable(productdto.isStockAvailable());
+			Category foundcategory = categoryRepository.findByCategoryName(productdto.getCategoryName())
+					.orElseThrow(() -> new RuntimeException("Category not found in thie name"));
+			x.setCategory(foundcategory);
 			return productRepository.save(x);
 		}).orElseThrow(() -> new RuntimeException("User Id not found"));
 		return changeToProductDTOResponse(updatedProduct);
@@ -78,11 +83,13 @@ public class ProductServiceImpl implements ProductService {
 		Category foundcategory = categoryRepository.findByCategoryName(productdto.getCategoryName())
 				.orElseThrow(() -> new RuntimeException("Category not found in thie name"));
 		product.setCategory(foundcategory);
+
 		return product;
 	}
 
 	private ProductDTOResponse changeToProductDTOResponse(Product product) {
 		ProductDTOResponse productDTOResponse = new ProductDTOResponse();
+
 		productDTOResponse.setId(product.getId());
 		productDTOResponse.setDescription(product.getDescription());
 		productDTOResponse.setPrice(product.getPrice());
@@ -93,6 +100,17 @@ public class ProductServiceImpl implements ProductService {
 		categoryDTOResponse.setId(product.getCategory().getId());
 		categoryDTOResponse.setCategoryName(product.getCategory().getCategoryName());
 		productDTOResponse.setCategory(categoryDTOResponse);
+		if (product.getReviews() != null) {
+			List<ReviewDTOResponse> reviewList = product.getReviews().stream().map(review -> {
+				ReviewDTOResponse reviewDTO = new ReviewDTOResponse();
+				reviewDTO.setId(review.getId());
+				reviewDTO.setName(review.getUser().getName());
+				reviewDTO.setEmail(review.getUser().getEmail());
+				reviewDTO.setComment(review.getComments());
+				return reviewDTO;
+			}).collect(Collectors.toList());
+			productDTOResponse.setReviews(reviewList);
+		}
 		return productDTOResponse;
 
 	}
