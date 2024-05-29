@@ -4,11 +4,13 @@ import java.util.List;
 
 import com.training.training_app.dto.CategoryDTO;
 import com.training.training_app.dto.CategoryDTOResponse;
+import com.training.training_app.exception.RecordAlreadyExistException;
+import com.training.training_app.exception.ResourceNotFountException;
 import com.training.training_app.model.Category;
 
 public interface CategoryService {
 	
-	public CategoryDTOResponse postCategory(CategoryDTO categorydto);
+	public CategoryDTOResponse postCategory(CategoryDTO categorydto) ;
 	public CategoryDTOResponse getById(Long categoryId);
 	public List<CategoryDTOResponse>getAllCategory();
 	public CategoryDTOResponse updateCategory(Long categoryId, CategoryDTO categorydto);

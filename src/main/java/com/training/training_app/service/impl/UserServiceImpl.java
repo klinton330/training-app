@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.training.training_app.dto.UserDTO;
+import com.training.training_app.exception.RecordAlreadyExistException;
+import com.training.training_app.exception.ResourceNotFountException;
 import com.training.training_app.model.User;
 import com.training.training_app.repository.UserRepository;
 import com.training.training_app.service.UserService;
@@ -18,8 +20,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User postUser(User user) {
-		User postedUser = userRepository.save(user);
-		return postedUser;
+		if (!userRepository.findByEmail(user.getEmail()).isPresent()) {
+			User postedUser = userRepository.save(user);
+			return postedUser;
+		} else
+			throw new RecordAlreadyExistException("User Already exists in DB"+user.getEmail());
 	}
 
 	@Override
@@ -29,7 +34,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User findPostedUserById(Long id) {
-		User getUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User Id not found"));
+		User getUser = userRepository.findById(id).orElseThrow(() -> new ResourceNotFountException("User Id not found in db:"+id));
 		return getUser;
 	}
 
@@ -40,13 +45,13 @@ public class UserServiceImpl implements UserService {
 			x.setName(userdto.getName());
 			x.setPassword(userdto.getPassword());
 			return userRepository.save(x);
-		}).orElseThrow(() -> new RuntimeException("User Id not found"));
+		}).orElseThrow(() -> new ResourceNotFountException("User Id not found in db:"+id));
 		return updatedUser;
 	}
 
 	@Override
 	public void deleteUser(Long id) {
-		User getUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User Id not found"));
+		User getUser = userRepository.findById(id).orElseThrow(() -> new ResourceNotFountException("User Id not found in db:"+id));
 		if (getUser != null)
 			userRepository.deleteById(id);
 

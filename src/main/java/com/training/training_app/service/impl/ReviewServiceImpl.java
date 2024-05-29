@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.training.training_app.dto.ReviewDTO;
 import com.training.training_app.dto.ReviewDTOResponse;
+import com.training.training_app.exception.ResourceNotFountException;
 import com.training.training_app.model.Product;
 import com.training.training_app.model.Review;
 import com.training.training_app.model.User;
@@ -28,9 +29,9 @@ public class ReviewServiceImpl implements ReviewService {
 		Review review = new Review();
 		review.setComments(reviewDTO.getComments());
 		User user = userRepository.findByName(reviewDTO.getUsername())
-				.orElseThrow(() -> new RuntimeException("UserNotFound"));
+				.orElseThrow(() -> new ResourceNotFountException("User is not found DB for user Id:" + reviewDTO.getUsername()));
 		Product product = productRepository.findById(productId)
-				.orElseThrow(() -> new RuntimeException("Product Not Found"));
+				.orElseThrow(() -> new ResourceNotFountException("Product is not found DB for Product Id:" + productId));
 		review.setProduct(product);
 		review.setUser(user);
 		Review postedReview = reviewRepository.save(review);
@@ -40,8 +41,8 @@ public class ReviewServiceImpl implements ReviewService {
 	@Override
 	public ReviewDTOResponse updateReview(Long productId, Long reviewId, ReviewDTO reviewDTO) {
 		Product product = productRepository.findById(productId)
-				.orElseThrow(() -> new RuntimeException("Product Not Found"));
-		Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new RuntimeException("Review Not Found"));
+				.orElseThrow(() -> new ResourceNotFountException("Product is not found DB for Product Id:" + productId));
+		Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new ResourceNotFountException("Review not found DB for Review Id:" + reviewId));
 		if (review.getProduct().getId() != product.getId())
 			throw new RuntimeException("Review Product id and Product Id not same");
 		if (review.getUser().getName().equalsIgnoreCase(reviewDTO.getUsername())) {
@@ -65,8 +66,8 @@ public class ReviewServiceImpl implements ReviewService {
 	@Override
 	public void deleteReview(Long productId, Long reviewId) {
 		Product product = productRepository.findById(productId)
-				.orElseThrow(() -> new RuntimeException("Product Not Found"));
-		Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new RuntimeException("Review Not Found"));
+				.orElseThrow(()->new ResourceNotFountException("Product is not found DB for Product Id:" + productId));
+		Review review = reviewRepository.findById(reviewId).orElseThrow(() -> new ResourceNotFountException("Review not found DB for Review Id:" + productId));
 		if (review.getProduct().getId() != product.getId())
 			throw new RuntimeException("Review Product id and Product Id not same");
 		reviewRepository.deleteById(reviewId);

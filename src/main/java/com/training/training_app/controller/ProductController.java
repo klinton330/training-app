@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.training.training_app.dto.ProductDTO;
 import com.training.training_app.dto.ProductDTOResponse;
+import com.training.training_app.exception.RecordAlreadyExistException;
+import com.training.training_app.exception.ResourceNotFountException;
 import com.training.training_app.model.Product;
 import com.training.training_app.service.ProductService;
 
@@ -26,7 +28,7 @@ public class ProductController {
 	private ProductService productService;
 
 	@PostMapping
-	public ResponseEntity<ProductDTOResponse> postProduct(@RequestBody ProductDTO productDTO) {
+	public ResponseEntity<ProductDTOResponse> postProduct(@RequestBody ProductDTO productDTO) throws RecordAlreadyExistException {
 		System.out.println(productDTO.getProductName());
 		return new ResponseEntity<ProductDTOResponse>(productService.postProduct(productDTO), HttpStatus.CREATED);
 
@@ -38,13 +40,13 @@ public class ProductController {
 	}
 
 	@GetMapping("{id}")
-	public ResponseEntity<ProductDTOResponse> getProductById(@PathVariable(name = "id") Long productId) {
+	public ResponseEntity<ProductDTOResponse> getProductById(@PathVariable(name = "id") Long productId) throws ResourceNotFountException {
 		return new ResponseEntity<>(productService.getById(productId), HttpStatus.OK);
 	}
 
 	@PutMapping("{id}")
 	public ResponseEntity<ProductDTOResponse> getUpdatedProduct(@PathVariable(name = "id") Long productId,
-			@RequestBody ProductDTO productDTO) {
+			@RequestBody ProductDTO productDTO) throws ResourceNotFountException {
 		System.out.println("putmapping");
 		return new ResponseEntity<ProductDTOResponse>(productService.updateProduct(productId, productDTO), HttpStatus.OK);
 	}
