@@ -1,6 +1,7 @@
 package com.training.training_app.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import com.training.training_app.dto.CategoryDTOResponse;
 import com.training.training_app.dto.ProductDTO;
 import com.training.training_app.dto.ProductDTOResponse;
 import com.training.training_app.dto.ReviewDTOResponse;
+import com.training.training_app.exception.RecordAlreadyExistException;
+import com.training.training_app.exception.ResourceNotFountException;
 import com.training.training_app.model.Category;
 import com.training.training_app.model.Product;
 import com.training.training_app.repository.CategoryRepository;
@@ -25,17 +28,29 @@ public class ProductServiceImpl implements ProductService {
 	private CategoryRepository categoryRepository;
 
 	@Override
-	public ProductDTOResponse postProduct(ProductDTO productdto) {
+	public ProductDTOResponse postProduct(ProductDTO productdto)  {
 		productdto.setStockAvailable(true);
 		Product product = changeToProduct(productdto);
-		Product postProduct = productRepository.save(product);
-		return changeToProductDTOResponse(postProduct);
+		/*
+		 * By Native SQL Query Product findProduct =
+		 * productRepository.findEntryOfProduct(product.getProductName()); BY JPQL Query
+		 * Optional<Product>findProduct =
+		 * productRepository.findProduct(product.getProductName());
+		 */
+		Optional<Product> findProduct = productRepository.findByProductName(product.getProductName());
+		if (!findProduct.isPresent()) {
+			Product postProduct = productRepository.save(product);
+			return changeToProductDTOResponse(postProduct);
+		} else
+			throw new RecordAlreadyExistException(
+					"Product is already found in DB for Product Name:" + productdto.getProductName());
+
 	}
 
 	@Override
-	public ProductDTOResponse getById(Long productId) {
-		Product product = productRepository.findById(productId)
-				.orElseThrow(() -> new RuntimeException("Product Id not found"));
+	public ProductDTOResponse getById(Long productId){
+		Product product = productRepository.findById(productId).orElseThrow(
+				() -> new ResourceNotFountException("Product is not found DB for Product Id:" + productId));
 		return changeToProductDTOResponse(product);
 	}
 
@@ -57,17 +72,18 @@ public class ProductServiceImpl implements ProductService {
 			x.setQuantity(productdto.getQuantity());
 			x.setStockAvailable(productdto.isStockAvailable());
 			Category foundcategory = categoryRepository.findByCategoryName(productdto.getCategoryName())
-					.orElseThrow(() -> new RuntimeException("Category not found in thie name"));
+					.orElseThrow(() -> new ResourceNotFountException(
+							"Category Name not found in DB Category Name:" + productdto.getCategoryName()));
 			x.setCategory(foundcategory);
 			return productRepository.save(x);
-		}).orElseThrow(() -> new RuntimeException("User Id not found"));
+		}).orElseThrow(() -> new ResourceNotFountException("Product is not found DB for Product Id:" + productId));
 		return changeToProductDTOResponse(updatedProduct);
 	}
 
 	@Override
 	public void deleteProduct(Long productId) {
-		Product product = productRepository.findById(productId)
-				.orElseThrow(() -> new RuntimeException("Product Id not found"));
+		Product product = productRepository.findById(productId).orElseThrow(
+				() -> new ResourceNotFountException("Product is not found DB for Product Id:" + productId));
 		if (product != null)
 			productRepository.deleteById(productId);
 
@@ -81,7 +97,8 @@ public class ProductServiceImpl implements ProductService {
 		product.setQuantity(productdto.getQuantity());
 		product.setStockAvailable(productdto.isStockAvailable());
 		Category foundcategory = categoryRepository.findByCategoryName(productdto.getCategoryName())
-				.orElseThrow(() -> new RuntimeException("Category not found in thie name"));
+				.orElseThrow(() -> new ResourceNotFountException(
+						"Category Name not found in DB Category Name:" + productdto.getCategoryName()));
 		product.setCategory(foundcategory);
 
 		return product;

@@ -8,4 +8,5 @@ import com.training.training_app.model.User;
 
 public interface UserRepository extends JpaRepository<User,Long> {
 	Optional<User> findByName(String user);
+	Optional<User> findByEmail(String email);
 } 

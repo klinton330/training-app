@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.training.training_app.dto.CategoryDTO;
 import com.training.training_app.dto.CategoryDTOResponse;
+import com.training.training_app.exception.RecordAlreadyExistException;
+import com.training.training_app.exception.ResourceNotFountException;
 import com.training.training_app.service.CategoryService;
 
 @RestController
@@ -26,7 +28,8 @@ public class CategoryController {
 	private CategoryService categoryService;
 
 	@PostMapping
-	public ResponseEntity<CategoryDTOResponse> postCategory(@RequestBody CategoryDTO categoryDTO) {
+	public ResponseEntity<CategoryDTOResponse> postCategory(@RequestBody CategoryDTO categoryDTO)
+			throws RecordAlreadyExistException, ResourceNotFountException {
 		return new ResponseEntity<>(categoryService.postCategory(categoryDTO), HttpStatus.CREATED);
 	}
 
@@ -36,20 +39,22 @@ public class CategoryController {
 	}
 
 	@GetMapping("{id}")
-	public ResponseEntity<CategoryDTOResponse> getById(@PathVariable(name = "id") Long categoryId) {
+	public ResponseEntity<CategoryDTOResponse> getById(@PathVariable(name = "id") Long categoryId)
+			throws ResourceNotFountException {
 		return new ResponseEntity<CategoryDTOResponse>(categoryService.getById(categoryId), HttpStatus.OK);
 
 	}
 
 	@PutMapping("{id}")
 	public ResponseEntity<CategoryDTOResponse> updateCategory(@PathVariable(name = "id") Long categoryId,
-			@RequestBody CategoryDTO categoryDTO) {
+			@RequestBody CategoryDTO categoryDTO) throws ResourceNotFountException {
 		return new ResponseEntity<CategoryDTOResponse>(categoryService.updateCategory(categoryId, categoryDTO),
 				HttpStatus.OK);
 	}
 
 	@DeleteMapping("{id}")
-	public ResponseEntity<String> deleteCategory(@PathVariable(name = "id") Long categoryId) {
+	public ResponseEntity<String> deleteCategory(@PathVariable(name = "id") Long categoryId)
+			throws ResourceNotFountException {
 		categoryService.deleteCategory(categoryId);
 		return new ResponseEntity<String>("Category Deleted Successfully", HttpStatus.OK);
 	}
