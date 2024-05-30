@@ -15,7 +15,7 @@ public class GlobalExceptionHandler implements ErrorController {
 	public ResponseEntity<HttpErrorResponse> resolveException(ResourceNotFountException exception) {
 		return createHttpResponse(HttpStatus.NOT_FOUND, exception.getMessage());
 	}
-
+	@ExceptionHandler(RecordAlreadyExistException.class)
 	public ResponseEntity<HttpErrorResponse> resolveException(RecordAlreadyExistException exception) {
 		return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
 	}

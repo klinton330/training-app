@@ -41,6 +41,6 @@ public class ReviewController {
 	public ResponseEntity<String> deleteReview(@PathVariable(name = "id") long productId,
 			@PathVariable(name = "reviewid") long reviewId) {
 		reviewService.deleteReview(productId, reviewId);
-		return new ResponseEntity<String>("Review Deleted Successfully", HttpStatus.OK);
+		return new ResponseEntity<String>("Review Deleted Successfully", HttpStatus.NO_CONTENT);
 	}
 }
