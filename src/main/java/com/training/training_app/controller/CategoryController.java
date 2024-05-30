@@ -56,7 +56,7 @@ public class CategoryController {
 	public ResponseEntity<String> deleteCategory(@PathVariable(name = "id") Long categoryId)
 			throws ResourceNotFountException {
 		categoryService.deleteCategory(categoryId);
-		return new ResponseEntity<String>("Category Deleted Successfully", HttpStatus.OK);
+		return new ResponseEntity<String>("Category Deleted Successfully", HttpStatus.NO_CONTENT);
 	}
 
 }

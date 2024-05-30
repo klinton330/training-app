@@ -1,6 +1,9 @@
 package com.training.training_app.model;
 
+import com.training.training_app.audit.AuditAwareImpl;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;

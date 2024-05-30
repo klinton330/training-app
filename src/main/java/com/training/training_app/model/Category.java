@@ -13,6 +13,7 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
+
 public class Category extends DateAudit {
 
 	@Id

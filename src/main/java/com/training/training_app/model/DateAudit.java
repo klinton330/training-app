@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,18 +14,30 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @MappedSuperclass
-@Data
-@JsonIgnoreProperties(value = { "createdAt", "updatedAt" },allowGetters = true)
+@Getter
+@Setter
+@ToString
+@JsonIgnoreProperties(value = { "createdAt", "updatedAt","lastModifiedBy","createdBy" }, allowGetters = true)
+@EntityListeners(AuditingEntityListener.class)
 public class DateAudit implements Serializable {
 
 	static final long serialVersionUID = 1L;
+	
 	@CreationTimestamp
-	@Column(nullable = false,updatable = false)
+	@Column(updatable = false)
 	private LocalDateTime createdAt;
 	@UpdateTimestamp
-	@Column(nullable = false)
+	@Column(insertable = false)
 	private LocalDateTime updatedAt;
+	@LastModifiedBy
+	@Column(insertable = false)
+	private String lastModifiedBy;
+	@CreatedBy
+	@Column(updatable = false)
+	private String createdBy;
 }
